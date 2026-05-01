@@ -1,0 +1,23 @@
+body{
+    margin:0;
+    background:#0f0f0f;
+    color:white;
+    font-family:sans-serif;
+}
+
+.container{
+    text-align:center;
+    padding-top:100px;
+}
+
+h1{
+    font-size:60px;
+}
+
+.user{
+    background:#1f1f1f;
+    margin:10px auto;
+    padding:20px;
+    width:250px;
+    border-radius:20px;
+}
