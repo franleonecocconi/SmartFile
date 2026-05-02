@@ -33,33 +33,77 @@ const interval = setInterval(() => {
 
 function loadPreview(){
 
-    if(files.length === 0) return;
+    previewContainer.innerHTML = "";
 
-    const file = files[0];
+    files.forEach(file => {
 
-    if(file.type.startsWith("image")){
+        const item = document.createElement("div");
 
-        const img = document.createElement("img");
+        item.style.width = "120px";
+        item.style.height = "120px";
+        item.style.background = "#f2f2f2";
+        item.style.borderRadius = "20px";
+        item.style.overflow = "hidden";
+        item.style.display = "flex";
+        item.style.alignItems = "center";
+        item.style.justifyContent = "center";
+        item.style.position = "relative";
 
-        img.src = "https://placehold.co/600x400";
+        if(file.type.startsWith("image")){
 
-        previewContainer.appendChild(img);
+            const img = document.createElement("img");
 
-    }else{
+            img.src = file.data;
 
-        previewContainer.innerHTML = `
-            <div style="
-            width:100%;
-            height:100%;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            font-size:30px;
-            ">
-            📁
-            </div>
-        `;
-    }
+            img.style.width = "100%";
+            img.style.height = "100%";
+            img.style.objectFit = "cover";
+
+            item.appendChild(img);
+
+        }
+
+        else if(file.type.startsWith("video")){
+
+            const video = document.createElement("video");
+
+            video.src = file.data;
+
+            video.currentTime = 1;
+
+            video.muted = true;
+
+            video.style.width = "100%";
+            video.style.height = "100%";
+            video.style.objectFit = "cover";
+
+            item.appendChild(video);
+
+        }
+
+        else if(file.type.includes("pdf")){
+
+            item.innerHTML = `
+                <div style="font-size:55px;">
+                    📕
+                </div>
+            `;
+
+        }
+
+        else{
+
+            item.innerHTML = `
+                <div style="font-size:55px;">
+                    📁
+                </div>
+            `;
+
+        }
+
+        previewContainer.appendChild(item);
+
+    });
 
 }
 
@@ -102,9 +146,43 @@ socket.on("devices", (devices) => {
 
         div.className = "device";
 
-        div.innerHTML = `
+        let icon = "💻";
+
+if(device.type.includes("iPhone")){
+    icon = "📱";
+}
+
+if(device.type.includes("Android")){
+    icon = "📱";
+}
+
+if(device.type.includes("Tablet")){
+    icon = "📲";
+}
+
+if(device.type.includes("iPad")){
+    icon = "📲";
+}
+
+if(device.type.includes("Mac")){
+    icon = "🖥️";
+}
+
+div.innerHTML = `
+    <div style="
+        display:flex;
+        align-items:center;
+        gap:15px;
+    ">
+        <div style="font-size:35px;">
+            ${icon}
+        </div>
+
+        <div>
             ${device.type}
-        `;
+        </div>
+    </div>
+`;
 
         devicesDiv.appendChild(div);
 

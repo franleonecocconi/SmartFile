@@ -13,22 +13,29 @@ body{
     flex-direction:column;
 }
 
-.upload-icon{
-    width:120px;
-    margin-bottom:20px;
+.drop-icon{
+    width:90px;
+    margin-bottom:15px;
 }
 
 #dropZone{
-    width:500px;
-    height:250px;
-    border:3px dashed #ccc;
-    border-radius:25px;
+    width:520px;
+    height:320px;
+    border:3px dashed #3b82f6;
+    border-radius:30px;
     display:flex;
+    flex-direction:column;
     justify-content:center;
     align-items:center;
     text-align:center;
     cursor:pointer;
     transition:0.2s;
+    background:#f8fbff;
+}
+
+#dropZone:hover{
+    border-color:#2563eb;
+    background:#eef5ff;
 }
 
 #dropZone:hover{
@@ -51,12 +58,13 @@ body{
 }
 
 #previewContainer{
-    width:400px;
-    height:250px;
-    background:#f2f2f2;
+    width:90%;
+    display:grid;
+    grid-template-columns:repeat(auto-fill, 120px);
+    gap:20px;
+    justify-content:center;
     margin:auto;
-    border-radius:20px;
-    overflow:hidden;
+    padding:20px;
 }
 
 #previewContainer img,

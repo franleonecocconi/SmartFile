@@ -13,30 +13,44 @@ dropZone.addEventListener("drop", (e) => {
 
     e.preventDefault();
 
-    const files = e.dataTransfer.files;
-
-    saveFiles(files);
+    handleFiles(e.dataTransfer.files);
 });
 
 fileInput.addEventListener("change", () => {
-    saveFiles(fileInput.files);
+    handleFiles(fileInput.files);
 });
 
-function saveFiles(files){
+function handleFiles(files){
 
-    const array = [];
+    const allFiles = [];
 
-    for(const file of files){
+    Array.from(files).forEach(file => {
 
-        array.push({
-            name:file.name,
-            type:file.type,
-            size:file.size
-        });
+        const reader = new FileReader();
 
-    }
+        reader.onload = () => {
 
-    localStorage.setItem("smartfiles", JSON.stringify(array));
+            allFiles.push({
+                name:file.name,
+                type:file.type,
+                size:file.size,
+                data:reader.result
+            });
 
-    window.location.href = "/upload.html";
+            if(allFiles.length === files.length){
+
+                localStorage.setItem(
+                    "smartfiles",
+                    JSON.stringify(allFiles)
+                );
+
+                window.location.href = "/upload.html";
+            }
+
+        };
+
+        reader.readAsDataURL(file);
+
+    });
+
 }
