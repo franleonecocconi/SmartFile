@@ -2,53 +2,25 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SmartFile</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>SmartFile</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="upload-box" id="uploadBox">
-    <img src="assets/upload.png">
+    <div id="uploadBox">
 
-    <h2>Haz click aquí o arrastra archivos o carpetas</h2>
+        <img src="upload.png">
 
-    <div class="upload-buttons">
-        <button id="chooseFiles">
-            Elegir Archivos
-        </button>
+        <h2>
+            Haz click o arrastra aquí
+        </h2>
 
-        <button id="chooseFolder">
-            Elegir Carpeta
-        </button>
     </div>
-</div>
-  type="file"
-  id="fileInput"
-  multiple
-  hidden
->
 
-<input
-  type="file"
-  id="folderInput"
-  webkitdirectory
-  directory
-  hidden
->
-
-</div>
-
-</div>
-
-<script src="/socket.io/socket.io.js"></script>
-<script src="app.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="app.js"></script>
 
 </body>
 </html>
