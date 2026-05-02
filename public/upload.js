@@ -124,14 +124,19 @@ if(/Android/i.test(agent)){
 }
 
 socket.emit("register-device", {
-    type: deviceType
+    userAgent: navigator.userAgent
 });
 
-socket.on("devices", (devices) => {
+
+   socket.on("devices", (devices) => {
 
     devicesDiv.innerHTML = "";
 
-    if(devices.length === 1){
+    const otherDevices = devices.filter(
+        d => d.id !== socket.id
+    );
+
+    if(otherDevices.length === 0){
 
         devicesDiv.innerHTML = `
             <p>No se detectaron dispositivos</p>
@@ -140,49 +145,35 @@ socket.on("devices", (devices) => {
         return;
     }
 
-    devices.forEach(device => {
+    otherDevices.forEach(device => {
+
+        const info = getDeviceType(device.userAgent);
 
         const div = document.createElement("div");
 
         div.className = "device";
 
-        let icon = "💻";
+        div.innerHTML = `
+            <div class="deviceRow">
 
-if(device.type.includes("iPhone")){
-    icon = "📱";
-}
+                <div class="deviceIcon">
+                    ${info.icon}
+                </div>
 
-if(device.type.includes("Android")){
-    icon = "📱";
-}
+                <div>
 
-if(device.type.includes("Tablet")){
-    icon = "📲";
-}
+                    <div class="deviceName">
+                        ${info.name}
+                    </div>
 
-if(device.type.includes("iPad")){
-    icon = "📲";
-}
+                    <div class="deviceStatus">
+                        En linea
+                    </div>
 
-if(device.type.includes("Mac")){
-    icon = "🖥️";
-}
+                </div>
 
-div.innerHTML = `
-    <div style="
-        display:flex;
-        align-items:center;
-        gap:15px;
-    ">
-        <div style="font-size:35px;">
-            ${icon}
-        </div>
-
-        <div>
-            ${device.type}
-        </div>
-    </div>
-`;
+            </div>
+        `;
 
         devicesDiv.appendChild(div);
 

@@ -24,14 +24,14 @@ io.on("connection", (socket) => {
 
     socket.on("register-device", (device) => {
 
-        devices[socket.id] = {
-            id: socket.id,
-            ...device
-        };
+    devices[socket.id] = {
+        id: socket.id,
+        userAgent: device.userAgent
+    };
 
-        io.emit("devices", Object.values(devices));
-    });
+    io.emit("devices", Object.values(devices));
 
+});
     socket.on("create-share", () => {
 
         const shareId = uuidv4();
