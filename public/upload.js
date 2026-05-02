@@ -127,6 +127,63 @@ socket.emit("register-device", {
     userAgent: navigator.userAgent
 });
 
+function getDeviceType(ua){
+
+    if(!ua){
+        return {
+            name:"Dispositivo",
+            icon:"💻"
+        };
+    }
+
+    if(ua.includes("iPhone")){
+        return {
+            name:"iPhone",
+            icon:"📱"
+        };
+    }
+
+    if(ua.includes("iPad")){
+        return {
+            name:"iPad",
+            icon:"📲"
+        };
+    }
+
+    if(ua.includes("Android")){
+
+        if(ua.includes("Mobile")){
+            return {
+                name:"Telefono Android",
+                icon:"📱"
+            };
+        }
+
+        return {
+            name:"Tablet Android",
+            icon:"📲"
+        };
+    }
+
+    if(ua.includes("Mac")){
+        return {
+            name:"Mac",
+            icon:"🖥️"
+        };
+    }
+
+    if(ua.includes("Windows")){
+        return {
+            name:"PC Windows",
+            icon:"💻"
+        };
+    }
+
+    return {
+        name:"Dispositivo",
+        icon:"💻"
+    };
+}
 
    socket.on("devices", (devices) => {
 
@@ -154,19 +211,30 @@ socket.emit("register-device", {
         div.className = "device";
 
         div.innerHTML = `
-            <div class="deviceRow">
+            <div style="
+                display:flex;
+                align-items:center;
+                gap:15px;
+            ">
 
-                <div class="deviceIcon">
+                <div style="
+                    font-size:35px;
+                ">
                     ${info.icon}
                 </div>
 
                 <div>
 
-                    <div class="deviceName">
+                    <div style="
+                        font-size:18px;
+                        font-weight:bold;
+                    ">
                         ${info.name}
                     </div>
 
-                    <div class="deviceStatus">
+                    <div style="
+                        color:gray;
+                    ">
                         En linea
                     </div>
 
