@@ -1,56 +1,192 @@
+const socket = io();
+
+/*
+========================
+ELEMENTOS
+========================
+*/
+
+const uploadBox = document.getElementById("uploadBox");
+
 const fileInput = document.getElementById("fileInput");
 const folderInput = document.getElementById("folderInput");
 
 const chooseFiles = document.getElementById("chooseFiles");
 const chooseFolder = document.getElementById("chooseFolder");
 
-chooseFiles.onclick = () => {
+/*
+========================
+BOTONES
+========================
+*/
+
+chooseFiles.addEventListener("click", (e) => {
+
+    e.stopPropagation();
+
     fileInput.click();
-};
+});
 
-chooseFolder.onclick = () => {
+chooseFolder.addEventListener("click", (e) => {
+
+    e.stopPropagation();
+
     folderInput.click();
-};
-
-fileInput.addEventListener("change", (e)=>{
-    handleFiles([...e.target.files]);
 });
 
-folderInput.addEventListener("change", (e)=>{
-    handleFiles([...e.target.files]);
+/*
+========================
+CLICK EN EL CUADRO
+========================
+*/
+
+uploadBox.addEventListener("click", () => {
+    fileInput.click();
 });
 
-function handleFiles(files){
+/*
+========================
+ARCHIVOS
+========================
+*/
 
-    const allFiles = [];
+fileInput.addEventListener("change", (e) => {
 
-    Array.from(files).forEach(file => {
+    const files = [...e.target.files];
 
-        const reader = new FileReader();
+    if(files.length === 0) return;
 
-        reader.onload = () => {
+    processFiles(files);
+});
 
-            allFiles.push({
-                name:file.name,
-                type:file.type,
-                size:file.size,
-                data:reader.result
-            });
+/*
+========================
+CARPETAS
+========================
+*/
 
-            if(allFiles.length === files.length){
+folderInput.addEventListener("change", (e) => {
 
-                localStorage.setItem(
-                    "smartfiles",
-                    JSON.stringify(allFiles)
-                );
+    const files = [...e.target.files];
 
-                window.location.href = "/upload.html";
-            }
+    if(files.length === 0) return;
 
-        };
+    processFiles(files);
+});
 
-        reader.readAsDataURL(file);
+/*
+========================
+DRAG & DROP
+========================
+*/
+
+uploadBox.addEventListener("dragover", (e) => {
+
+    e.preventDefault();
+
+    uploadBox.classList.add("dragging");
+});
+
+uploadBox.addEventListener("dragleave", () => {
+
+    uploadBox.classList.remove("dragging");
+});
+
+uploadBox.addEventListener("drop", (e) => {
+
+    e.preventDefault();
+
+    uploadBox.classList.remove("dragging");
+
+    const files = [...e.dataTransfer.files];
+
+    if(files.length === 0) return;
+
+    processFiles(files);
+});
+
+/*
+========================
+PROCESAR ARCHIVOS
+========================
+*/
+
+function processFiles(files){
+
+    const savedFiles = [];
+
+    files.forEach(file => {
+
+        savedFiles.push({
+            name: file.name,
+            size: file.size,
+            type: file.type
+        });
 
     });
 
+    sessionStorage.setItem(
+        "smartfile_files",
+        JSON.stringify(savedFiles)
+    );
+
+    window.location.href = "upload.html";
 }
+
+/*
+========================
+WEBSOCKET
+========================
+*/
+
+socket.on("connect", () => {
+    console.log("Conectado al servidor");
+});
+
+/*
+========================
+WEBRTC
+========================
+*/
+
+const peer = new RTCPeerConnection();
+
+/*
+========================
+DEVICE INFO
+========================
+*/
+
+function getDeviceType(){
+
+    const agent = navigator.userAgent;
+
+    if(agent.includes("iPhone")){
+        return "iPhone";
+    }
+
+    if(agent.includes("iPad")){
+        return "iPad";
+    }
+
+    if(agent.includes("Android")){
+
+        if(agent.includes("Mobile")){
+            return "Teléfono Android";
+        }
+
+        return "Tablet Android";
+    }
+
+    if(agent.includes("Mac")){
+        return "Mac";
+    }
+
+    if(agent.includes("Windows")){
+        return "PC Windows";
+    }
+
+    return "Dispositivo";
+}
+
+console.log("Dispositivo:", getDeviceType());
