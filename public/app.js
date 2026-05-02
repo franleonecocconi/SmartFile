@@ -1,23 +1,23 @@
-const dropZone = document.getElementById("dropZone");
 const fileInput = document.getElementById("fileInput");
+const folderInput = document.getElementById("folderInput");
 
-dropZone.addEventListener("click", () => {
+const chooseFiles = document.getElementById("chooseFiles");
+const chooseFolder = document.getElementById("chooseFolder");
+
+chooseFiles.onclick = () => {
     fileInput.click();
+};
+
+chooseFolder.onclick = () => {
+    folderInput.click();
+};
+
+fileInput.addEventListener("change", (e)=>{
+    handleFiles([...e.target.files]);
 });
 
-dropZone.addEventListener("dragover", (e) => {
-    e.preventDefault();
-});
-
-dropZone.addEventListener("drop", (e) => {
-
-    e.preventDefault();
-
-    handleFiles(e.dataTransfer.files);
-});
-
-fileInput.addEventListener("change", () => {
-    handleFiles(fileInput.files);
+folderInput.addEventListener("change", (e)=>{
+    handleFiles([...e.target.files]);
 });
 
 function handleFiles(files){

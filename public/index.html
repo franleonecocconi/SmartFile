@@ -14,15 +14,34 @@
 </head>
 <body>
 
-<div class="center">
+<div class="upload-box" id="uploadBox">
+    <img src="assets/upload.png">
 
-    <div id="dropZone">
+    <h2>Haz click aquí o arrastra archivos o carpetas</h2>
 
-    <img src="assets/upload.png" class="drop-icon">
+    <div class="upload-buttons">
+        <button id="chooseFiles">
+            Elegir Archivos
+        </button>
 
-    <h2>Haz click aqui o arrastra un archivo o carpeta</h2>
+        <button id="chooseFolder">
+            Elegir Carpeta
+        </button>
+    </div>
+</div>
+  type="file"
+  id="fileInput"
+  multiple
+  hidden
+>
 
-    <input type="file" id="fileInput" hidden multiple webkitdirectory>
+<input
+  type="file"
+  id="folderInput"
+  webkitdirectory
+  directory
+  hidden
+>
 
 </div>
 
