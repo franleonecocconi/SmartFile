@@ -5,16 +5,31 @@
     <title>SmartFile</title>
     <link rel="stylesheet" href="style.css">
 </head>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SmartFile</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 <body>
 
-    <div class="container">
-        <h1>SmartFile</h1>
+<div class="center">
 
-        <div id="users"></div>
+    <img src="assets/upload.png" class="upload-icon">
+
+    <div id="dropZone">
+
+        <h2>Haz click aqui o arrastra un archivo o carpeta</h2>
+
+        <input type="file" id="fileInput" hidden multiple>
+
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="app.js"></script>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="app.js"></script>
 
 </body>
 </html>

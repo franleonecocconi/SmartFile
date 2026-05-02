@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Subiendo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="topbar">
+    <button id="sendBtn">Enviar</button>
+</div>
+
+<div class="upload-container">
+
+    <div class="progress-container">
+        <div id="progressBar"></div>
+    </div>
+
+    <div id="previewContainer"></div>
+
+</div>
+
+<div id="shareModal" class="hidden">
+
+    <div class="modal">
+
+        <div class="left">
+
+            <canvas id="qr"></canvas>
+
+        </div>
+
+        <div class="right">
+
+            <h2>Zip de SmartFile</h2>
+
+            <p id="zipSize">0 MB</p>
+
+            <h3>Copiar URL</h3>
+
+            <p>Copia la URL para compartir</p>
+
+            <input type="text" id="shareUrl" readonly>
+
+            <h3>Nearby Devices</h3>
+
+            <p>Selecciona el dispositivo</p>
+
+            <div id="devices"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="upload.js"></script>
+
+</body>
+</html>

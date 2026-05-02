@@ -1,42 +1,76 @@
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
+const path = require("path");
+const { v4: uuidv4 } = require("uuid");
 
 const app = express();
 const server = http.createServer(app);
 
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origin: "*"
+    }
+});
 
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
 
-let users = [];
+const devices = {};
+const shares = {};
 
 io.on("connection", (socket) => {
 
-    console.log("Usuario conectado:", socket.id);
+    console.log("Conectado:", socket.id);
 
-    users.push(socket.id);
+    socket.on("register-device", (device) => {
 
-    // Enviar lista completa al nuevo usuario
-    socket.emit("all-users", users);
+        devices[socket.id] = {
+            id: socket.id,
+            ...device
+        };
 
-    // Avisar a los demás
-    socket.broadcast.emit("new-user", socket.id);
+        io.emit("devices", Object.values(devices));
+    });
+
+    socket.on("create-share", () => {
+
+        const shareId = uuidv4();
+
+        shares[shareId] = {
+            owner: socket.id
+        };
+
+        socket.emit("share-created", {
+            shareId,
+            url: `/download.html?id=${shareId}`
+        });
+
+    });
+
+    socket.on("signal", (data) => {
+
+        io.to(data.target).emit("signal", {
+            from: socket.id,
+            signal: data.signal
+        });
+
+    });
 
     socket.on("disconnect", () => {
 
-        console.log("Usuario desconectado:", socket.id);
+        delete devices[socket.id];
 
-        users = users.filter(id => id !== socket.id);
+        io.emit("devices", Object.values(devices));
 
-        io.emit("user-left", socket.id);
-
+        console.log("Desconectado:", socket.id);
     });
 
 });
 
-const PORT = process.env.PORT || 3000;
+app.get("/api/devices", (req, res) => {
+    res.json(Object.values(devices));
+});
 
-server.listen(PORT, () => {
+server.listen(process.env.PORT || 3000, () => {
     console.log("Servidor iniciado");
 });

@@ -1,42 +1,42 @@
-const socket = io();
+const dropZone = document.getElementById("dropZone");
+const fileInput = document.getElementById("fileInput");
 
-const usersDiv = document.getElementById("users");
-
-function addUser(id){
-
-    // evitar duplicados
-    if(document.getElementById(id)) return;
-
-    const div = document.createElement("div");
-
-    div.className = "user";
-    div.id = id;
-
-    div.innerText = "Dispositivo: " + id;
-
-    usersDiv.appendChild(div);
-}
-
-socket.on("all-users", (users) => {
-
-    usersDiv.innerHTML = "";
-
-    users.forEach(id => {
-        addUser(id);
-    });
-
+dropZone.addEventListener("click", () => {
+    fileInput.click();
 });
 
-socket.on("new-user", (id) => {
-    addUser(id);
+dropZone.addEventListener("dragover", (e) => {
+    e.preventDefault();
 });
 
-socket.on("user-left", (id) => {
+dropZone.addEventListener("drop", (e) => {
 
-    const el = document.getElementById(id);
+    e.preventDefault();
 
-    if(el){
-        el.remove();
+    const files = e.dataTransfer.files;
+
+    saveFiles(files);
+});
+
+fileInput.addEventListener("change", () => {
+    saveFiles(fileInput.files);
+});
+
+function saveFiles(files){
+
+    const array = [];
+
+    for(const file of files){
+
+        array.push({
+            name:file.name,
+            type:file.type,
+            size:file.size
+        });
+
     }
 
-});
+    localStorage.setItem("smartfiles", JSON.stringify(array));
+
+    window.location.href = "/upload.html";
+}
