@@ -1,128 +1,198 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>SmartFile Upload</title>
 
-    <title>SmartFile Upload</title>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
 
-    <link rel="stylesheet" href="upload.css">
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:#f5f7fb;
+    display:flex;
+    justify-content:center;
+    padding:20px;
+}
+
+.container{
+    width:900px;
+    background:white;
+    border-radius:12px;
+    padding:20px;
+    display:flex;
+    gap:20px;
+}
+
+/* LEFT */
+.left{
+    flex:1;
+}
+
+/* RIGHT */
+.right{
+    flex:1;
+}
+
+/* QR */
+#qr{
+    display:flex;
+    justify-content:center;
+    margin-top:15px;
+}
+
+/* URL */
+.url{
+    background:#eee;
+    padding:10px;
+    border-radius:8px;
+    margin-top:10px;
+    word-break:break-all;
+}
+
+/* BUTTON */
+button{
+    margin-top:10px;
+    padding:10px;
+    border:none;
+    background:#3b82f6;
+    color:white;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+/* DEVICES */
+.device{
+    padding:8px;
+    border-bottom:1px solid #eee;
+}
+
+/* FILES */
+.file{
+    padding:6px;
+    border-bottom:1px solid #eee;
+}
+</style>
 </head>
+
 <body>
 
-    <!-- CONTENEDOR -->
+<div class="container">
 
-    <div id="uploadContainer">
+    <!-- IZQUIERDA -->
+    <div class="left">
 
-        <!-- TOP -->
+        <h2>📦 Archivos</h2>
+        <div id="files"></div>
 
-        <div id="topBar">
+        <h3>🔗 URL</h3>
+        <div class="url" id="url"></div>
+        <button onclick="copyURL()">Copiar URL</button>
 
-            <div>
-
-                <h1>
-                    Zip de SmartFile
-                </h1>
-
-                <p id="zipSize">
-                    0 MB
-                </p>
-
-            </div>
-
-            <button id="sendButton">
-                Enviar
-            </button>
-
-        </div>
-
-        <!-- BARRA -->
-
-        <div id="progressArea">
-
-            <div id="progressBar"></div>
-
-        </div>
-
-        <!-- PORTADAS -->
-
-        <div id="previewGrid"></div>
+        <h3>🔳 QR</h3>
+        <div id="qr"></div>
 
     </div>
 
-    <!-- MENU -->
+    <!-- DERECHA -->
+    <div class="right">
 
-    <div id="shareMenu">
-
-        <div id="shareBox">
-
-            <!-- IZQUIERDA -->
-
-            <div id="leftSide">
-
-                <img
-                    src="qr.png"
-                    id="qrImage"
-                >
-
-            </div>
-
-            <!-- DERECHA -->
-
-            <div id="rightSide">
-
-                <img src="close.png">
-                    id="closeButton"
-                >
-
-                <h2>
-                    Zip de SmartFile
-                </h2>
-
-                <p id="menuSize">
-                    0 MB
-                </p>
-
-                <h3>
-                    Copiar URL
-                </h3>
-
-                <p id="copyText">
-                    Copia la URL y compartela con quien quieras
-                </p>
-
-                <!-- URL -->
-
-                <div id="urlBox">
-
-                    <input
-                        type="text"
-                        id="urlInput"
-                        readonly
-                    >
-
-                    <img src="assets/copy.png">
-                        id="copyButton"
-                    >
-
-                </div>
-
-                <!-- DEVICES -->
-
-                <h3 id="nearbyTitle">
-                    Nearby Devices
-                </h3>
-
-                <div id="devicesList"></div>
-
-            </div>
-
-        </div>
+        <h2>📱 Dispositivos</h2>
+        <div id="devices"></div>
 
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="upload.js"></script>
+</div>
+
+<script>
+const socket = io();
+
+/*
+========================
+DATA
+========================
+*/
+
+const files = JSON.parse(sessionStorage.getItem("smartfile_files") || "[]");
+
+const room = sessionStorage.getItem("smartfile_room") || Math.random().toString(36).substring(2);
+
+const url = window.location.origin + "/share/" + room;
+
+/*
+========================
+FILES UI
+========================
+*/
+
+const filesBox = document.getElementById("files");
+
+files.forEach(f => {
+
+    const div = document.createElement("div");
+    div.className = "file";
+
+    div.innerText = `${f.name} (${Math.round(f.size/1024)} KB)`;
+
+    filesBox.appendChild(div);
+});
+
+/*
+========================
+URL
+========================
+*/
+
+document.getElementById("url").innerText = url;
+
+/*
+========================
+QR
+========================
+*/
+
+new QRCode(document.getElementById("qr"), {
+    text: url,
+    width: 180,
+    height: 180
+});
+
+/*
+========================
+COPY
+========================
+*/
+
+function copyURL(){
+    navigator.clipboard.writeText(url);
+}
+
+/*
+========================
+SOCKET
+========================
+*/
+
+socket.emit("join-room", room);
+
+socket.on("devices-update", (devices) => {
+
+    const box = document.getElementById("devices");
+    box.innerHTML = "";
+
+    devices.forEach(d => {
+
+        const div = document.createElement("div");
+        div.className = "device";
+
+        div.innerText = `${d.icon} ${d.name}`;
+
+        box.appendChild(div);
+    });
+});
+</script>
 
 </body>
 </html>
