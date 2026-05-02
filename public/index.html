@@ -1,26 +1,60 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartFile</title>
+<meta charset="UTF-8">
+<title>SmartFile</title>
 
-    <link rel="stylesheet" href="style.css">
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:#f5f7fb;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+#uploadBox{
+    width:400px;
+    height:250px;
+    background:white;
+    border:2px dashed #3b82f6;
+    border-radius:12px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+#uploadBox:hover{
+    transform:scale(1.02);
+}
+
+#uploadBox img{
+    width:60px;
+    margin-bottom:10px;
+}
+
+#uploadBox p{
+    color:#666;
+    margin:0;
+}
+</style>
 </head>
+
 <body>
 
-    <div id="uploadBox">
+<div id="uploadBox">
+    <img src="assets/upload.png" alt="upload">
+    <p>Haz click o arrastra aquí</p>
+</div>
 
-        <img src="assets/upload.png">
+<input type="file" id="fileInput" multiple hidden>
 
-        <h2>
-            Haz click o arrastra aquí
-        </h2>
-
-    </div>
-
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="app.js"></script>
+<script src="app.js"></script>
 
 </body>
 </html>
