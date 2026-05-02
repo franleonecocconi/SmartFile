@@ -2,41 +2,29 @@ const socket = io();
 
 /*
 ========================
-ELEMENTOS
+CUADRO
 ========================
 */
 
 const uploadBox = document.getElementById("uploadBox");
 
-const fileInput = document.getElementById("fileInput");
-const folderInput = document.getElementById("folderInput");
-
-const chooseFiles = document.getElementById("chooseFiles");
-const chooseFolder = document.getElementById("chooseFolder");
-
 /*
 ========================
-BOTONES
+INPUT OCULTO
 ========================
 */
 
-chooseFiles.addEventListener("click", (e) => {
+const fileInput = document.createElement("input");
 
-    e.stopPropagation();
+fileInput.type = "file";
+fileInput.multiple = true;
+fileInput.hidden = true;
 
-    fileInput.click();
-});
-
-chooseFolder.addEventListener("click", (e) => {
-
-    e.stopPropagation();
-
-    folderInput.click();
-});
+document.body.appendChild(fileInput);
 
 /*
 ========================
-CLICK EN EL CUADRO
+CLICK
 ========================
 */
 
@@ -46,7 +34,7 @@ uploadBox.addEventListener("click", () => {
 
 /*
 ========================
-ARCHIVOS
+SELECCIONAR ARCHIVOS
 ========================
 */
 
@@ -54,70 +42,52 @@ fileInput.addEventListener("change", (e) => {
 
     const files = [...e.target.files];
 
-    if(files.length === 0) return;
+    if(files.length <= 0) return;
 
-    processFiles(files);
+    saveFiles(files);
 });
 
 /*
 ========================
-CARPETAS
-========================
-*/
-
-folderInput.addEventListener("change", (e) => {
-
-    const files = [...e.target.files];
-
-    if(files.length === 0) return;
-
-    processFiles(files);
-});
-
-/*
-========================
-DRAG & DROP
+DRAG OVER
 ========================
 */
 
 uploadBox.addEventListener("dragover", (e) => {
 
     e.preventDefault();
-
-    uploadBox.classList.add("dragging");
 });
 
-uploadBox.addEventListener("dragleave", () => {
-
-    uploadBox.classList.remove("dragging");
-});
+/*
+========================
+DROP
+========================
+*/
 
 uploadBox.addEventListener("drop", (e) => {
 
     e.preventDefault();
 
-    uploadBox.classList.remove("dragging");
-
     const files = [...e.dataTransfer.files];
 
-    if(files.length === 0) return;
+    if(files.length <= 0) return;
 
-    processFiles(files);
+    saveFiles(files);
 });
 
 /*
 ========================
-PROCESAR ARCHIVOS
+GUARDAR ARCHIVOS
 ========================
 */
 
-function processFiles(files){
+function saveFiles(files){
 
-    const savedFiles = [];
+    const saved = [];
 
     files.forEach(file => {
 
-        savedFiles.push({
+        saved.push({
             name: file.name,
             size: file.size,
             type: file.type
@@ -127,66 +97,25 @@ function processFiles(files){
 
     sessionStorage.setItem(
         "smartfile_files",
-        JSON.stringify(savedFiles)
+        JSON.stringify(saved)
     );
+
+    /*
+    ========================
+    IR A UPLOAD.HTML
+    ========================
+    */
 
     window.location.href = "upload.html";
 }
 
 /*
 ========================
-WEBSOCKET
+SOCKET
 ========================
 */
 
 socket.on("connect", () => {
-    console.log("Conectado al servidor");
+
+    console.log("Conectado");
 });
-
-/*
-========================
-WEBRTC
-========================
-*/
-
-const peer = new RTCPeerConnection();
-
-/*
-========================
-DEVICE INFO
-========================
-*/
-
-function getDeviceType(){
-
-    const agent = navigator.userAgent;
-
-    if(agent.includes("iPhone")){
-        return "iPhone";
-    }
-
-    if(agent.includes("iPad")){
-        return "iPad";
-    }
-
-    if(agent.includes("Android")){
-
-        if(agent.includes("Mobile")){
-            return "Teléfono Android";
-        }
-
-        return "Tablet Android";
-    }
-
-    if(agent.includes("Mac")){
-        return "Mac";
-    }
-
-    if(agent.includes("Windows")){
-        return "PC Windows";
-    }
-
-    return "Dispositivo";
-}
-
-console.log("Dispositivo:", getDeviceType());
